@@ -1,5 +1,5 @@
 REMEMBER EVERY S3 CODE START WITH  ====     aws_s3_
-AFTER aws_s3_ ADD        ====            bucket       /       object     /        bucket_versioning  
+AFTER aws_s3_ ADD        ====            bucket       /       object     /        bucket_versioning    /   bucket_lifecycle_configuration
 
 
 #RANDOM WORD FOR S3 NEW NAME
@@ -48,11 +48,39 @@ resource "aws_s3_bucket_versioning" "versioning_example" {
 
 
 
+# LIFECYCLE 3 RULE APPLIED
 
 
+resource "aws_s3_bucket_lifecycle_configuration" "versioning-bucket-config" {
+  # Must have bucket versioning enabled first
+  depends_on = [aws_s3_bucket_versioning.versioning_example]                           #####change name if need as per ur code value
 
+  bucket = aws_s3_bucket.example.id                                                    #####change name if need as per ur code value
 
+  rule {
+    id = "config"
 
+    filter {
+      prefix = "config/"
+    }
+
+    noncurrent_version_expiration {
+      noncurrent_days = 90
+    }
+
+    noncurrent_version_transition {
+      noncurrent_days = 30
+      storage_class   = "STANDARD_IA"
+    }
+
+    noncurrent_version_transition {
+      noncurrent_days = 60
+      storage_class   = "GLACIER"
+    }
+
+    status = "Enabled"
+  }
+}
 
 
 
