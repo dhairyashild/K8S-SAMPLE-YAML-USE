@@ -1,5 +1,5 @@
-REMEMBER CODE START WITH  ====     aws_s3_
-THEN REMEMBR WORD         ====            bucket              object                 bucket_versioning  
+REMEMBER EVERY S3 CODE START WITH  ====     aws_s3_
+AFTER aws_s3_ ADD        ====            bucket       /       object     /        bucket_versioning  
 
 
 #RANDOM WORD FOR S3 NEW NAME
