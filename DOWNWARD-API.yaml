@@ -1,0 +1,144 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: downward-api-all-vars
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: downward-api-all-vars
+  template:
+    metadata:
+      labels:
+        app: downward-api-all-vars
+        mylabel: "example-label"
+      annotations:
+        myannotation: "example-annotation"
+    spec:
+      containers:
+      - name: main-container
+        image: nginx:latest
+        resources:
+          requests:
+            cpu: 250m
+            memory: 64Mi
+          limits:
+            cpu: 500m
+            memory: 128Mi
+        env:
+#### Most Important and Commonly Used --imp given inthis code by fieldPath: / resourcefieldPath: ####but least imp given as volume below so i know to use volume / directly####
+          - name: POD_NAME
+            valueFrom:
+              fieldRef:                                             ####fieldPath:  —-it gives pod level env to pod eg. pod name , label, ns, pod ip
+                fieldPath: metadata.name
+          - name: POD_NAMESPACE
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.namespace
+          - name: POD_IP
+            valueFrom:
+              fieldRef:                                       
+                fieldPath: status.podIP
+          - name: NODE_NAME
+            valueFrom:
+              fieldRef:
+                fieldPath: spec.nodeName
+          - name: CPU_REQUEST
+            valueFrom:
+              resourceFieldRef:                                     ####resourceFieldRef :  —-for container level env vars as downward api (=give info to own pod)
+                resource: requests.cpu
+                divisor: 1m
+          - name: MEMORY_REQUEST
+            valueFrom:
+              resourceFieldRef:
+                resource: requests.memory
+                divisor: 1Mi
+          - name: CPU_LIMIT
+            valueFrom:
+              resourceFieldRef:
+                resource: limits.cpu
+                divisor: 1m
+          - name: MEMORY_LIMIT
+            valueFrom:
+              resourceFieldRef:
+                resource: limits.memory
+                divisor: 1Mi
+ ####but least imp given as volume below so i know to use volume / directly####              
+ #### Important but Less Frequently Used ####
+          - name: SERVICE_ACCOUNT_NAME
+            valueFrom:
+              fieldRef:
+                fieldPath: spec.serviceAccountName
+          - name: HOST_IP
+            valueFrom:
+              fieldRef:
+                fieldPath: status.hostIP
+          - name: POD_UID
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.uid
+          - name: POD_ANNOTATIONS_SINGLE
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.annotations['myannotation']
+          - name: POD_LABELS_SINGLE
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.labels['mylabel']
+          - name: POD_HOSTIPS
+            valueFrom:
+              fieldRef:
+                fieldPath: status.hostIPs
+          - name: POD_IPS
+            valueFrom:
+              fieldRef:
+                fieldPath: status.podIPs
+          - name: EPHEMERAL_STORAGE_REQUEST
+            valueFrom:
+              resourceFieldRef:
+                resource: requests.ephemeral-storage
+
+          - name: EPHEMERAL_STORAGE_LIMIT
+            valueFrom:
+              resourceFieldRef:
+                resource: limits.ephemeral-storage
+
+          #### Least Commonly Used (DownwardAPI Volume Only) ####
+        volumeMounts:
+        - name: downward-api-volume
+          mountPath: /etc/downward
+      volumes:
+      - name: downward-api-volume
+        downwardAPI:
+          items:
+          - path: "labels"
+            fieldRef:
+              fieldPath: metadata.labels
+          - path: "annotations"
+            fieldRef:
+              fieldPath: metadata.annotations
+        command: ["/bin/sh", "-c"]
+        args:
+          - |
+            echo "Pod Name: $POD_NAME"
+            echo "Pod Namespace: $POD_NAMESPACE"
+            echo "Pod IP: $POD_IP"
+            echo "Node Name: $NODE_NAME"
+            echo "CPU Request (m): $CPU_REQUEST"
+            echo "Memory Request (Mi): $MEMORY_REQUEST"
+            echo "CPU Limit (m): $CPU_LIMIT"
+            echo "Memory Limit (Mi): $MEMORY_LIMIT"
+            echo "Service Account Name: $SERVICE_ACCOUNT_NAME"
+            echo "Host IP: $HOST_IP"
+            echo "Pod UID: $POD_UID"
+            echo "Pod Annotation Single: $POD_ANNOTATIONS_SINGLE"
+            echo "Pod Label Single: $POD_LABELS_SINGLE"
+            echo "Host IPs: $POD_HOSTIPS"
+            echo "Pod IPs: $POD_IPS"
+            echo "Ephemeral Storage Request: $EPHEMERAL_STORAGE_REQUEST"
+            echo "Ephemeral Storage Limit: $EPHEMERAL_STORAGE_LIMIT"
+            echo "Labels from Volume:"
+            cat /etc/downward/labels
+            echo "Annotations from Volume:"
+            cat /etc/downward/annotations
+            sleep infinity
