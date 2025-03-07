@@ -5,6 +5,10 @@ resource "random_id" "server" {
 }
 
 
+
+
+
+#### CREATE BUCKET
 resource "aws_s3_bucket" "example" {
   bucket = "bucket-${random_id.server.hex}"     ####WRONG CODE == ( NO HEX)            --  CORRCT CODE== { .hex }
 
@@ -15,6 +19,8 @@ resource "aws_s3_bucket" "example" {
 }
 
 
+
+#### ADD OBJECT FROM LOCAL PC TO S3
 resource "aws_s3_object" "object" {
   bucket = aws_s3_bucket.example.id
   key    = "ganja"                              #### NAME / FOLDER PATH SHOWN ON S3 LIKE /data/file.txt
@@ -25,6 +31,8 @@ resource "aws_s3_object" "object" {
   # etag = "${md5(file("path/to/file"))}"
   etag = filemd5("path/to/file")                #### check
 }
+
+
 
 
 # VERSIONING
