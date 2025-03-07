@@ -1,3 +1,6 @@
+REMEMBER CODE START WITH  ====     aws_s3_
+THEN REMEMBR WORD         ====            bucket              object                 bucket_versioning  
+
 
 #RANDOM WORD FOR S3 NEW NAME
 resource "random_id" "server" {
