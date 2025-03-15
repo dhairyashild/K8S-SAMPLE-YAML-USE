@@ -1,8 +1,18 @@
 https://kubernetes.io/docs/concepts/workloads/pods/downward-api/
 
- ####fieldPath:  —-it gives pod level env to pod eg. pod name , label, ns, pod ip
- ###resourceFieldRef :  —-for container level env vars as downward api (=give info to own pod)
- #####
+###code to remember -- not get on k8s.io
+ - name: APP_LABEL
+      valueFrom:
+        fieldRef:                              ####fieldPath:  —-it gives pod level env to pod eg. pod name , label, ns, pod ip
+          fieldPath: metadata.labels['app']
+    - name: CPU_REQUEST
+      valueFrom:
+        resourceFieldRef:                       ####resourceFieldRef :  —-for container level env vars as downward api EG.it can give resource {cpu , memory} related request limit only
+          containerName: main-container
+          resource: requests.cpu
+
+
+
 Here's a list of the most commonly used names from the downward API, focusing on their environment variable or volume file representation:
 
 Environment Variables:
