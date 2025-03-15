@@ -1,6 +1,7 @@
 https://kubernetes.io/docs/concepts/workloads/pods/downward-api/
 
 ###code to remember -- not get on k8s.io
+ env
  - name: APP_LABEL
       valueFrom:
         fieldRef:                              ####fieldPath:  —-it gives pod level env to pod eg. pod name , label, ns, pod ip
