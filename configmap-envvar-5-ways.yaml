@@ -1,3 +1,16 @@
+#####imp points
+--REMEMBER if STARTING WORD-- envFrom: means full cm , env: mean 1 key  , volumeMounts: means also full cm or if key as items given
+
+1) give full configmap                     2) gives 1st=direct env/2nd=key/3rd=downward api         3) give volumes
+
+envFrom:                                       env:                                                  volumeMounts:  
+        - configMapRef:                             - name: PLAYER_INITIAL_LIVES
+            name: myconfigmap                         valueFrom:
+                                                        configMapKeyRef:   
+                                                          name: game-demo
+                                                          key: player_initial_lives 
+
+
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -16,7 +29,6 @@ spec:
       - name: nginx
         image: nginx:latest
         
-        # Environment Variables Section
         env:
         # Method 1: Direct Assignment (MESSAGE)
         - name: MESSAGE
