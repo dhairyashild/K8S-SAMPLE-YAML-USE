@@ -1,0 +1,36 @@
+link    --- https://kubernetes.io/docs/tasks/run-application/configure-pdb/
+
+
+Pod Topology Spread Constraints
+              control how Pods are distributed across different failure domains (e.g., regions, zones, nodes) to enhance availability and resource utilization.
+
+Key Components:
+maxSkew: Defines the maximum allowed unevenness in Pod distribution. Must be greater than zero.
+topologyKey: Specifies the topology domain (like zone or node) for spreading Pods.topology.   (   kubernetes.io/region   , topology.kubernetes.io/zone)
+whenUnsatisfiable: Determines the action when constraints cannot be met (e.g., DoNotSchedule keeps the Pod pending).
+labelSelector: Filters which Pods the constraints apply to based on labels.
+
+Benefits:
+Improves fault tolerance by preventing a single point of failure.
+Optimizes resource utilization by distributing workloads evenly.
+
+kind: Pod
+apiVersion: v1
+metadata:
+  name: mypod
+  labels:
+    foo: bar
+spec:
+  topologySpreadConstraints:
+  - maxSkew: 1
+    topologyKey: zone
+    whenUnsatisfiable: DoNotSchedule
+    labelSelector:
+      matchLabels:
+        foo: bar
+  containers:
+  - name: pause
+    image: registry.k8s.io/pause:3.1
+Limitations:
+Constraints may not remain satisfied if Pods are removed (e.g., during scaling down).
+
