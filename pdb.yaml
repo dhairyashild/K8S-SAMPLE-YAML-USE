@@ -1,3 +1,4 @@
+#link-- https://kubernetes.io/docs/tasks/run-application/configure-pdb/
 Pod Disruption Budget (PDB) - Key Notes for DevOps (Shortest):
 Purpose: Ensures high availability by limiting the number of pods disrupted during voluntary actions like upgrades or scaling
 
